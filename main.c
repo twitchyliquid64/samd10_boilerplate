@@ -17,14 +17,22 @@ void configure_system_clock() {
 int main(void) {
   configure_system_clock();
   setup_rtc();
+  setup_tc1();
 
   // Setup LED on PA24 for blinky-boi.
   PORT->Group[0].DIRSET.reg |= PORT_PA24;
   PORT->Group[0].OUTSET.reg |= PORT_PA24;
-  setup_tc1();
+
+  // Setup pin on PA25 as an input. PULLEN is not set (no pullups).
+  PORT->Group[0].PINCFG[25].reg = (PORT_PINCFG_INEN);
+  // Setup continous sampling on the group of pins to shave 2 clock cycles off a read.
+  PORT->Group[0].CTRL.reg |= PORT_PA25;
+
 
   while(1) {
-    delay_ms_rtc(1000);
-    //PORT->Group[0].OUTTGL.reg |= PORT_PA24;
+    delay_ms_rtc(10);
+    if ((PORT->Group[0].IN.reg & PORT_PA25) != 0) {
+      PORT->Group[0].OUTSET.reg |= PORT_PA24;
+    }
   }
 }
