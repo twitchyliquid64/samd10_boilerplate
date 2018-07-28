@@ -20,15 +20,15 @@ void setup_tc1() {
   // wait for synchronization.
   while (TC1->COUNT16.STATUS.bit.SYNCBUSY);
 
-  // set capture compare value to 1024.
-  TC1->COUNT16.CC[0].reg = 1024;
+  // set capture compare value to 13999.
+  TC1->COUNT16.CC[0].reg = 13999;
   // wait for synchronization.
   while (TC1->COUNT16.STATUS.bit.SYNCBUSY);
 
   // enable interrupts on overflow.
   TC1->COUNT16.INTENSET.reg = ((TC_INTENCLR_OVF));
 
-  NVIC_SetPriority (TC1_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+  NVIC_SetPriority(TC1_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
   NVIC_EnableIRQ(TC1_IRQn);
 
   // enable TC1.

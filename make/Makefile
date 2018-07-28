@@ -30,6 +30,7 @@ SRCS += \
 	../busyloop.c \
 	../rtc.c \
 	../tc.c \
+	../eic.c \
 	../startup_samd10.c
 
 DEFINES += \
