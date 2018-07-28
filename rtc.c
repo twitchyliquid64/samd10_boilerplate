@@ -3,7 +3,7 @@
 volatile uint32_t millisecondcount = 0;
 
 void setup_rtc(void) {
-  // first, set the global clock divider to 1.
+  // first, set the clock divider to 1.
   GCLK->GENDIV.reg = ((GCLK_GENCTRL_ID(2)) | (GCLK_GENDIV_DIV(1)));
   // connect generic clock generator 2 to OSC32K and enable it.
   GCLK->GENCTRL.reg = ((GCLK_GENCTRL_ID(2)) | (GCLK_GENCTRL_SRC_OSC32K) | (GCLK_GENCTRL_GENEN));

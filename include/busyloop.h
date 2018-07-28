@@ -1,2 +1,2 @@
 
-void delay_ms(uint32_t ms);
+void delay_ms_busyloop(uint32_t ms);
