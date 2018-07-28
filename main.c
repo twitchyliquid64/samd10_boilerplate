@@ -1,10 +1,11 @@
 #include "samd10.h"
 #include "busyloop.h"
 #include "rtc.h"
+#include "tc.h"
 
 void configure_system_clock() {
   // enable external oscilator, crystal mode, gain set sanely for just under 30Mhz, enable-on-standby, AGC enabled
-  SYSCTRL->XOSC.reg = ((SYSCTRL_XOSC_ENABLE) | (SYSCTRL_XOSC_RUNSTDBY) | (SYSCTRL_XOSC_XTALEN) | SYSCTRL_XOSC_GAIN(0xB) | (SYSCTRL_XOSC_AMPGC));
+  SYSCTRL->XOSC.reg = ((SYSCTRL_XOSC_ENABLE) | (SYSCTRL_XOSC_RUNSTDBY) | (SYSCTRL_XOSC_XTALEN) | SYSCTRL_XOSC_STARTUP(0xA) | SYSCTRL_XOSC_GAIN(0x3) | (SYSCTRL_XOSC_AMPGC));
   while (!SYSCTRL->PCLKSR.bit.XOSCRDY);
 
   // first, set the clock divider to 1.
@@ -20,8 +21,10 @@ int main(void) {
   // Setup LED on PA24 for blinky-boi.
   PORT->Group[0].DIRSET.reg |= PORT_PA24;
   PORT->Group[0].OUTSET.reg |= PORT_PA24;
+  setup_tc1();
+
   while(1) {
-    delay_ms_busyloop(1000);
-    PORT->Group[0].OUTTGL.reg |= PORT_PA24;
+    delay_ms_rtc(1000);
+    //PORT->Group[0].OUTTGL.reg |= PORT_PA24;
   }
 }

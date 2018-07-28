@@ -29,7 +29,8 @@ SRCS += \
   ../main.c \
 	../busyloop.c \
 	../rtc.c \
-  ../startup_samd10.c
+	../tc.c \
+	../startup_samd10.c
 
 DEFINES += \
   -D__SAMD10C13A__ \
