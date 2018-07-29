@@ -31,6 +31,7 @@ SRCS += \
 	../rtc.c \
 	../tc.c \
 	../eic.c \
+	../adc.c \
 	../startup_samd10.c
 
 DEFINES += \

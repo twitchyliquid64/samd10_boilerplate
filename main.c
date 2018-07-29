@@ -3,6 +3,7 @@
 #include "rtc.h"
 #include "tc.h"
 #include "eic.h"
+#include "adc.h"
 
 void configure_system_clock() {
   // enable external oscilator, crystal mode, gain set sanely for just under 30Mhz, enable-on-standby, AGC enabled
@@ -20,6 +21,7 @@ int main(void) {
   setup_rtc();
   setup_tc1();
   setup_eic();
+  setup_adc();
 
   // Setup LED on PA24 for blinky-boi.
   PORT->Group[0].DIRSET.reg |= PORT_PA24;
@@ -34,7 +36,8 @@ int main(void) {
 
 
   while(1) {
-    delay_ms_rtc(10);
+    delay_ms_rtc(1000);
+    PORT->Group[0].OUTTGL.reg |= PORT_PA24;
     //if ((PORT->Group[0].IN.reg & PORT_PA25) != 0) {
     //  PORT->Group[0].OUTSET.reg |= PORT_PA24;
     //}

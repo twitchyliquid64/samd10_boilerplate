@@ -38,7 +38,7 @@ void setup_tc1() {
 
 void irq_handler_tc1() {
   if (TC1->COUNT16.INTFLAG.bit.OVF) {
-    PORT->Group[0].OUTTGL.reg |= PORT_PA24;
+    //PORT->Group[0].OUTTGL.reg |= PORT_PA24;
     TC1->COUNT16.INTFLAG.reg = TC_INTENCLR_OVF; // clear overflow
   }
 }
