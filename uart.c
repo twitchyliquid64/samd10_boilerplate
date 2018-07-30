@@ -4,9 +4,11 @@
 void setup_uart(void) {
   // enable power to the SERCOM peripheral.
   PM->APBCMASK.reg |= PM_APBCMASK_SERCOM0;
+
   // use generic clock generator 4 + enable it + connect it to the SERCOM module.
   // CLKGEN 4 should have already been connected to OSC8M with a divider of 1.
   GCLK->CLKCTRL.reg = ((GCLK_CLKCTRL_GEN_GCLK4) | (GCLK_CLKCTRL_CLKEN) | (GCLK_CLKCTRL_ID(SERCOM0_GCLK_ID_CORE)));
+  while (GCLK->STATUS.bit.SYNCBUSY);
 
   // Set PA05 to use an alternative function.
   PORT->Group[0].PINCFG[5].reg = ((PORT_PINCFG_PMUXEN));
@@ -29,17 +31,20 @@ void setup_uart(void) {
      SERCOM_USART_CTRLA_SAMPR(0) |
 	   SERCOM_USART_CTRLA_RXPO(3) | SERCOM_USART_CTRLA_TXPO(1);
 
-  // TX enable, character size set to 8 bits.
-  SERCOM0->USART.CTRLB.reg = ((SERCOM_USART_CTRLB_TXEN) | (SERCOM_USART_CTRLB_CHSIZE(0))); // SERCOM_USART_CTRLB_RXEN
-
   // Aynchronous mode + arithmetic baud-rate generation selected in CTRLA.
-  // Datasheet says Register = 65,536 * ( 1 - S(Fbaud/Fref))
-  //                Register = 65,536 * ( 1 - S(9600/8,000,000))
+  // Datasheet says Register = 65,536 * ( 1 -  S(Fbaud/Fref))
+  //                Register = 65,536 * ( 1 -  S(9600/8,000,000))
+  //                Register = 65,536 * ( 1 - 16(9600/8,000,000))
   //                Register = 64277.7088
   SERCOM0->USART.BAUD.reg = 64277;
 
+  // TX enable, character size set to 8 bits.
+  SERCOM0->USART.CTRLB.reg = ((SERCOM_USART_CTRLB_TXEN) | (SERCOM_USART_CTRLB_CHSIZE(0))); // SERCOM_USART_CTRLB_RXEN
+  while(SERCOM0->USART.SYNCBUSY.bit.CTRLB);
+
   // Enable peripheral.
   SERCOM0->USART.CTRLA.reg |= SERCOM_USART_CTRLA_ENABLE;
+  while(SERCOM0->USART.SYNCBUSY.bit.ENABLE);
 }
 
 void uart_putc(char c)
