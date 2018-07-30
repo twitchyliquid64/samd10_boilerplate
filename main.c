@@ -4,6 +4,7 @@
 #include "tc.h"
 #include "eic.h"
 #include "adc.h"
+#include "uart.h"
 
 void configure_system_clock() {
   // enable external oscilator, crystal mode, gain set sanely for just under 30Mhz, enable-on-standby, AGC enabled
@@ -22,6 +23,7 @@ int main(void) {
   setup_tc1();
   setup_eic();
   setup_adc();
+  setup_uart();
 
   // Setup LED on PA24 for blinky-boi.
   PORT->Group[0].DIRSET.reg |= PORT_PA24;

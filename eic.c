@@ -1,4 +1,5 @@
 #include "samd10.h"
+#include "uart.h"
 
 void setup_eic(){
   // setup_rtc() should have connected 32k internal osc to GCLK 2.
@@ -26,6 +27,7 @@ void setup_eic(){
 void irq_handler_eic(void) {
   if (EIC->INTFLAG.bit.EXTINT5) {
     EIC->INTFLAG.reg = EIC_INTFLAG_EXTINT5;
+    uart_puts("HELLO!\n");
     PORT->Group[0].OUTSET.reg |= PORT_PA24;
   }
 }
