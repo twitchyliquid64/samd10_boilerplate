@@ -1,8 +1,12 @@
 #include "samd10.h"
 
+#include "circ_buffer.h"
+#include "uart.h"
+
+CIRCBUF_DEF(uartRecvBuff, 32);
 
 void setup_uart(void) {
-  // enable power to the SERCOM peripheral.
+  // enable clocking to the SERCOM0 peripheral.
   PM->APBCMASK.reg |= PM_APBCMASK_SERCOM0;
 
   // use generic clock generator 4 + enable it + connect it to the SERCOM module.
@@ -72,13 +76,8 @@ void irq_handler_sercom0(void)
   if (SERCOM0->USART.INTFLAG.bit.RXC) { // single byte ready.
     uint8_t b = (uint8_t) (SERCOM0->USART.DATA.reg & 0xFF);
 
-    switch (b) {
-      case 'r':
-        PORT->Group[0].OUTSET.reg |= PORT_PA24;
-        break;
-      case 'o':
-        PORT->Group[0].OUTCLR.reg |= PORT_PA24;
-        break;
+    if (circBufPush(&uartRecvBuff, b) == BUFF_OP_ERR) {
+        // TODO: Set a fault flag.
     }
   }
 }

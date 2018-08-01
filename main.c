@@ -5,6 +5,9 @@
 #include "eic.h"
 #include "adc.h"
 #include "uart.h"
+#include "circ_buffer.h"
+
+extern circBuf_t uartRecvBuff;
 
 void configure_system_clock() {
   // enable external oscilator, crystal mode, gain set sanely for just under 30Mhz, enable-on-standby, AGC enabled
@@ -36,10 +39,26 @@ int main(void) {
   // Setup pin mux function for pin 25 (2*12 + 1, AKA odd) to function A, which corresponds to external interrupt 5.
   PORT->Group[0].PMUX[12].reg = ((PORT_PMUX_PMUXO_A));
 
+  uart_puts("Booted.\r\n");
 
   while(1) {
-    delay_ms_rtc(1000);
-    PORT->Group[0].OUTTGL.reg |= PORT_PA24;
+    delay_ms_rtc(1);
+
+    UART_RX_ISR_DISABLE();
+    if (circBufLen(&uartRecvBuff) > 2) {
+      uint8_t buff[4];
+      int copied = circBufCopy(&uartRecvBuff,(uint8_t *) &buff, 3);
+      buff[3] = '\0';
+
+      // Yes I know this is a wierd way to do it.
+      if (copied == 3 && buff[0] == 'r' && buff[1] == 'e' && buff[2] == 'd')
+        PORT->Group[0].OUTSET.reg |= PORT_PA24;
+      if (copied == 3 && buff[0] == 'o' && buff[1] == 'f' && buff[2] == 'f')
+        PORT->Group[0].OUTCLR.reg |= PORT_PA24;
+    }
+    UART_RX_ISR_ENABLE();
+
+
     //if ((PORT->Group[0].IN.reg & PORT_PA25) != 0) {
     //  PORT->Group[0].OUTSET.reg |= PORT_PA24;
     //}

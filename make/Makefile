@@ -33,6 +33,7 @@ SRCS += \
 	../eic.c \
 	../adc.c \
 	../uart.c \
+	../circ_buffer.c \
 	../startup_samd10.c
 
 DEFINES += \
