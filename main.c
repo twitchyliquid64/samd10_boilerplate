@@ -5,6 +5,7 @@
 #include "eic.h"
 #include "adc.h"
 #include "uart.h"
+#include "i2c.h"
 #include "circ_buffer.h"
 
 extern circBuf_t uartRecvBuff;
@@ -27,6 +28,7 @@ int main(void) {
   setup_eic();
   setup_adc();
   setup_uart();
+  setup_i2c();
 
   // Setup LED on PA24 for blinky-boi.
   PORT->Group[0].DIRSET.reg |= PORT_PA24;
